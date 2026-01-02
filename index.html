@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pink Tasks | Pesantren Digital</title>
+    <title>AngelDaily | Task Reminder</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#fb6f92">
     <style>
@@ -11,13 +11,14 @@
             --primary-pink: #ffafcc;
             --dark-pink: #fb6f92;
             --light-pink: #ffc8dd;
+            --success-green: #2ecc71;
             --bg-white: #fff1f2;
             --text-color: #4a4e69;
         }
 
         body {
             background-color: var(--bg-white);
-            font-family: 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
             display: flex;
             justify-content: center;
@@ -27,15 +28,15 @@
         .app-container {
             background: white;
             padding: 2rem;
-            margin-top: 50px;
+            margin: 20px;
             border-radius: 25px;
             box-shadow: 0 15px 35px rgba(251, 111, 146, 0.2);
-            width: 90%;
+            width: 100%;
             max-width: 400px;
-            height: fit-content;
         }
 
-        h1 { color: var(--dark-pink); text-align: center; font-size: 1.8rem; }
+        h1 { color: var(--dark-pink); text-align: center; margin-bottom: 5px; }
+        p.subtitle { text-align: center; font-size: 0.8rem; color: var(--primary-pink); margin-bottom: 20px; }
 
         .btn-permission {
             width: 100%;
@@ -56,6 +57,7 @@
             border: 2px solid var(--light-pink);
             border-radius: 12px;
             outline: none;
+            font-size: 1rem;
         }
 
         .btn-add {
@@ -66,86 +68,92 @@
             color: white;
             font-weight: bold;
             cursor: pointer;
+            font-size: 1rem;
         }
 
         #todoList { list-style: none; padding: 0; margin-top: 20px; }
 
         .todo-item {
-            background: var(--bg-white);
-            padding: 12px;
-            margin-bottom: 10px;
-            border-radius: 12px;
-            border-left: 5px solid var(--primary-pink);
+            background: white;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 15px;
+            border-left: 6px solid var(--primary-pink);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: all 0.5s ease;
         }
 
-        .footer-note {
-            font-size: 0.7rem;
-            text-align: center;
-            color: var(--dark-pink);
-            margin-top: 20px;
-            opacity: 0.7;
+        /* BINDING COLOR CLASS */
+        .todo-item.done {
+            border-left-color: var(--success-green);
+            background-color: #f0fff4;
+            transform: scale(0.98);
         }
+
+        .todo-item.done strong { color: var(--success-green); text-decoration: line-through; }
+
+        .footer { text-align: center; font-size: 0.7rem; margin-top: 30px; opacity: 0.6; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <h1>🌸 Pink Tasks</h1>
-    <button class="btn-permission" onclick="requestPermission()">Enable Notifications</button>
+    <h1>AngelDaily</h1>
+    <p class="subtitle">Focus on your growth, not just grades.</p>
+    
+    <button class="btn-permission" onclick="requestPermission()">Aktifkan Notifikasi</button>
 
     <div class="input-group">
-        <input type="text" id="taskInput" placeholder="Task: e.g. Deep Thinking">
+        <input type="text" id="taskInput" placeholder="Apa yang ingin dipikirkan?">
         <input type="datetime-local" id="timeInput">
-        <button class="btn-add" onclick="addTask()">Schedule Notification</button>
+        <button class="btn-add" onclick="addTask()">Jadwalkan</button>
     </div>
 
     <ul id="todoList"></ul>
     
-    <div class="footer-note">Pesantren Digital: Thinking > Certificates</div>
+    <div class="footer">AngelDaily for pesantrendigital.net</div>
 </div>
 
 <script>
-    // Register Service Worker
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('sw.js');
     }
 
-    // Notification Permission
     async function requestPermission() {
         const permission = await Notification.requestPermission();
-        if (permission === 'granted') alert("Notifications ready!");
+        if (permission === 'granted') alert("Notifikasi Aktif!");
     }
 
     function addTask() {
-        const taskText = document.getElementById('taskInput').value;
-        const timeVal = document.getElementById('timeInput').value;
+        const taskInput = document.getElementById('taskInput');
+        const timeInput = document.getElementById('timeInput');
         
-        if (!taskText || !timeVal) return alert("Fill all fields");
+        if (!taskInput.value || !timeInput.value) return alert("Isi semua data ya!");
 
-        const targetDate = new Date(timeVal).getTime();
-        const delay = targetDate - Date.now();
+        const targetTime = new Date(timeInput.value).getTime();
+        const delay = targetTime - Date.now();
 
-        if (delay < 0) return alert("Time must be in the future!");
+        if (delay < 0) return alert("Waktu sudah lewat!");
 
-        // Add to list
+        const list = document.getElementById('todoList');
         const li = document.createElement('li');
         li.className = 'todo-item';
-        li.innerHTML = `<strong>${taskText}</strong><br><small>${new Date(timeVal).toLocaleString()}</small>`;
-        document.getElementById('todoList').appendChild(li);
+        li.innerHTML = `<strong>${taskInput.value}</strong><br><small>${new Date(timeInput.value).toLocaleString('id-ID')}</small>`;
+        list.appendChild(li);
 
-        // Schedule Notification (App-Open Logic)
+        // Logic Binding Color saat Notifikasi Muncul
         setTimeout(() => {
+            li.classList.add('done');
             if (Notification.permission === 'granted') {
-                new Notification("Task Reminder", {
-                    body: `It's time for: ${taskText}`,
+                new Notification("AngelDaily Reminder", {
+                    body: `Waktunya mengerjakan: ${taskInput.value}`,
                     icon: "icon.png"
                 });
-            } else {
-                alert(`Reminder: ${taskText}`);
             }
         }, delay);
 
-        document.getElementById('taskInput').value = '';
+        taskInput.value = '';
+        timeInput.value = '';
     }
 </script>
 
