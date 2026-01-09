@@ -1,14 +1,14 @@
 {
-  "name": "AngelDaily Task Reminder",
-  "short_name": "AngelDaily",
-  "start_url": "index.html",
+  "name": "Angel Daily",
+  "short_name": "Angel",
+  "start_url": ".",
   "display": "standalone",
-  "background_color": "#fff1f2",
-  "theme_color": "#fb6f92",
+  "background_color": "#fff0f3",
+  "theme_color": "#ff85a2",
   "icons": [
     {
-      "src": "icon.png",
-      "sizes": "192x192",
+      "src": "https://cdn-icons-png.flaticon.com/512/2589/2589175.png",
+      "sizes": "512x512",
       "type": "image/png"
     }
   ]
