@@ -1,335 +1,617 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Angel Planner</title>
-    <link rel="manifest" href="manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Angel's ToDo 🌸</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+
     <style>
-        :root { 
-            --pink-deep: #ff5c8a;
-            --pink-main: #ff85a2; 
-            --pink-soft: #ffcad4;
-            --pink-bg: #fff9fa;
-            --text-dark: #2d1b1e;
-            --header-h: 70px;
-            --nav-h: 80px;
+#quote-box {
+    background: linear-gradient(135deg, #FFB6C1 0%, #FF92BB 100%);
+    padding: 20px;
+    border-radius: 25px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 8px 20px rgba(255, 146, 187, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+#quote-content {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#btn-random-quote {
+    background: rgba(255, 255, 255, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    padding: 8px 18px;
+    border-radius: 50px;
+    margin-top: 15px;
+    font-family: 'Quicksand';
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: 0.3s;
+}
+
+#btn-random-quote:active {
+    transform: scale(0.9);
+    background: rgba(255, 255, 255, 0.4);
+}
+
+#btn-random-quote .material-icons {
+    font-size: 16px;
+}
+
+/* Animasi Fade saat ganti quote */
+.fade-out {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+.quote-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.quote-card-mini {
+    background: white;
+    padding: 20px;
+    border-radius: 15px;
+    border-bottom: 4px solid var(--soft-pink);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+}
+
+.quote-card-mini p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #666;
+    font-style: italic;
+}
+
+.quote-card-mini span {
+    display: block;
+    margin-top: 10px;
+    font-size: 0.7rem;
+    color: var(--hot-pink);
+    font-weight: bold;
+}
+#quote-container {
+    padding: 15px 15px 0 15px;
+}
+#quote-box {
+    background: linear-gradient(135deg, #FFB6C1 0%, #FFC0CB 100%);
+    padding: 15px;
+    border-radius: 20px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(255, 182, 193, 0.4);
+}
+#quote-text {
+transition: all 0.5s ease-in-out;
+    margin: 0;
+    font-size: 0.9rem;
+    font-style: italic;
+    line-height: 1.4;
+    font-weight: 600;
+}
+#quote-author {
+    display: block;
+    font-size: 0.7rem;
+    margin-top: 8px;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+        :root {
+            --soft-pink: #FFB6C1;
+            --hot-pink: #FF69B4;
+            --bg-girly: #FFF0F5;
+            --white: #ffffff;
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
 
-        body, html { 
-            height: 100%; margin: 0; padding: 0; 
-            overflow: hidden; background: var(--pink-bg);
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            color: var(--text-dark);
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: var(--bg-girly);
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column;
+            height: 100vh; color: #555;
         }
 
-        /* --- LOGIN STYLING (THE NEW LOOK) --- */
-        #view-login { 
-            position: fixed; inset: 0; 
-            background: linear-gradient(135deg, #fff0f3 0%, #ffcad4 100%);
-            display: flex; align-items: center; justify-content: center; z-index: 2000;
-            overflow: hidden;
-        }
-
-        /* Dekorasi Hati Melayang di Background */
-        .bg-heart {
-            position: absolute; color: rgba(255, 133, 162, 0.2);
-            animation: float 6s infinite ease-in-out; z-index: 0;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0); }
-            50% { transform: translateY(-20px) rotate(20deg); }
-        }
-
-        .login-card {
-            width: 88%; position: relative; z-index: 10;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            padding: 40px 30px; border-radius: 40px;
+        /* Header Handheld */
+        header {
+            background: var(--white);
+            padding: 20px;
             text-align: center;
-            box-shadow: 0 25px 50px rgba(255, 92, 138, 0.15);
+            border-bottom: 3px solid var(--soft-pink);
+            border-radius: 0 0 25px 25px;
+            box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3);
+            position: sticky; top: 0; z-index: 10;
         }
 
-        .login-card .logo-area {
-            width: 80px; height: 80px; background: white;
-            border-radius: 25px; margin: 0 auto 20px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 10px 20px rgba(255, 92, 138, 0.1);
+        header h1 {
+            margin: 0; font-size: 1.4rem; color: var(--hot-pink);
+            font-weight: 700; display: flex; align-items: center; justify-content: center;
         }
 
-        .login-card h2 { margin: 0; font-size: 26px; color: var(--pink-deep); font-weight: 800; }
-        .login-card p { margin: 5px 0 25px; font-size: 14px; color: #888; }
-
-        .input-group { position: relative; margin-bottom: 15px; }
-        .input-group span { 
-            position: absolute; left: 15px; top: 15px; 
-            color: var(--pink-soft); font-size: 20px; 
+        /* Container Utama */
+        #app-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 15px 100px 15px; /* bottom padding untuk navbar */
         }
-        .input-group input {
-            width: 100%; padding: 15px 15px 15px 45px;
-            background: rgba(255, 255, 255, 0.8);
-            border: 2px solid transparent; border-radius: 20px;
-            outline: none; font-family: inherit; font-size: 16px;
+
+        /* Card List */
+        .todo-item {
+            background: var(--white);
+            border-radius: 18px;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.03);
+            border-left: 6px solid var(--soft-pink);
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .todo-item.done {
+            border-left: 6px solid #d1d1d1;
+            background-color: #f9f9f9;
+        }
+
+        .todo-item.done .text {
+            text-decoration: line-through;
+            color: #bbb;
+        }
+
+        .text { flex: 1; margin: 0 15px; font-weight: 600; font-size: 0.95rem; }
+        .date-badge { font-size: 0.7rem; color: #999; display: block; }
+
+        .btn-check {
+            color: var(--hot-pink);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn-check:active { transform: scale(1.3); }
+
+        /* Form Input */
+        .form-card {
+            background: white; padding: 20px; border-radius: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: 700; color: var(--hot-pink); font-size: 0.9rem; }
+        
+        input {
+            width: 100%; padding: 12px; border: 2px solid var(--bg-girly);
+            border-radius: 12px; font-family: 'Quicksand'; outline: none;
             transition: 0.3s;
         }
-        .input-group input:focus { border-color: var(--pink-main); background: white; }
 
-        /* --- APP STRUCTURE STYLING --- */
-        .app-container {
-            display: flex; flex-direction: column;
-            height: 100vh; max-width: 500px; margin: 0 auto;
-            position: relative; background: var(--pink-bg);
+        input:focus { border-color: var(--soft-pink); }
+
+        .btn-add {
+            width: 100%; background: var(--hot-pink); color: white;
+            border: none; padding: 15px; border-radius: 12px;
+            font-weight: 700; font-size: 1rem; cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 105, 180, 0.4);
         }
 
-        header {
-            height: var(--header-h); display: flex; justify-content: space-between;
-            align-items: center; padding: 0 24px; z-index: 100; background: var(--pink-bg);
-        }
-        header h1 { margin: 0; font-size: 22px; font-weight: 700; color: var(--pink-deep); }
-
-        main { flex: 1; overflow-y: auto; padding: 10px 20px; -webkit-overflow-scrolling: touch; }
-
-        nav {
-            height: var(--nav-h); background: white;
+        /* Bottom Tabbar */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: white; height: 75px;
             display: flex; justify-content: space-around; align-items: center;
-            border-top-left-radius: 32px; border-top-right-radius: 32px;
-            box-shadow: 0 -10px 30px rgba(255, 92, 138, 0.1);
+            border-top: 1px solid #eee;
             padding-bottom: env(safe-area-inset-bottom);
         }
 
-        .nav-btn { 
-            text-decoration: none; color: #d1d1d1;
-            display: flex; flex-direction: column; align-items: center; gap: 4px;
-        }
-        .nav-btn.active { color: var(--pink-deep); }
-        .nav-btn .material-icons-round { font-size: 30px; }
-
-        /* Task Cards */
-        .task-card { 
-            background: white; padding: 20px; margin-bottom: 16px; border-radius: 24px; 
-            display: flex; align-items: center; gap: 16px; 
-            box-shadow: 0 8px 20px rgba(255, 133, 162, 0.05); 
-        }
-        .task-card.done { opacity: 0.6; }
-        
-        .checkbox-custom {
-            width: 28px; height: 28px; border: 3px solid var(--pink-soft);
-            border-radius: 10px; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; flex-shrink: 0;
-        }
-        .checkbox-custom.active { background: var(--pink-deep); border-color: var(--pink-deep); }
-        .checkbox-custom .material-icons-round { color: white; font-size: 18px; display: none; }
-        .checkbox-custom.active .material-icons-round { display: block; }
-
-        /* Day Picker */
-        .day-row { display: flex; justify-content: space-between; margin: 15px 0 25px; }
-        .day-input { display: none; }
-        .day-btn {
-            width: 42px; height: 42px; border-radius: 14px;
-            background: #fff; border: 2px solid var(--pink-soft);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 13px; font-weight: 700; color: var(--pink-main);
-        }
-        .day-input:checked + .day-btn { background: var(--pink-deep); color: white; border-color: var(--pink-deep); }
-
-        .btn-primary { 
-            background: var(--pink-deep); color: white; border: none; padding: 18px; 
-            border-radius: 22px; font-weight: 700; width: 100%; font-size: 16px;
-            box-shadow: 0 10px 20px rgba(255, 92, 138, 0.2);
+        .nav-link {
+            text-decoration: none; color: #ccc;
+            display: flex; flex-direction: column; align-items: center;
+            transition: 0.3s; flex: 1;
         }
 
-        .hidden { display: none !important; }
+        .nav-link.active { color: var(--hot-pink); }
+        .nav-link span { font-size: 0.7rem; font-weight: 700; margin-top: 4px; }
+
+        /* Loading Spinner */
+        .loader { text-align: center; color: var(--soft-pink); margin-top: 50px; }
     </style>
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
 
-<div class="app-container">
-    
-    <div id="view-login">
-        <span class="material-icons-round bg-heart" style="top:10%; left:10%; font-size:40px;">favorite</span>
-        <span class="material-icons-round bg-heart" style="top:20%; right:15%; font-size:60px; animation-delay:1s;">favorite</span>
-        <span class="material-icons-round bg-heart" style="bottom:15%; left:20%; font-size:50px; animation-delay:2s;">favorite</span>
-        
-        <div class="login-card">
-            <div class="logo-area">
-                <span class="material-icons-round" style="font-size: 45px; color: var(--pink-deep)">favorite</span>
-            </div>
-            <h2>Halo Angel!</h2>
-            <p>Ayo atur harimu dengan cinta ✨</p>
-            
-            <form id="form-login">
-                <div class="input-group">
-                    <span class="material-icons-round">alternate_email</span>
-                    <input type="email" id="login-email" placeholder="Email kamu..." required>
-                </div>
-                <div class="input-group">
-                    <span class="material-icons-round">lock</span>
-                    <input type="password" id="login-pass" placeholder="Password..." required>
-                </div>
-                <button type="submit" class="btn-primary" style="margin-top:10px;">Masuk Aplikasi</button>
-            </form>
+<header>
+    <h1 id="header-title">🌸 Angel's Day</h1>
+</header>
+<div id="quote-container">
+    <div id="quote-box">
+        <div id="quote-content">
+            <p id="quote-text">"Kamu aman, kamu kuat, dan kamu sedang berproses."</p>
+            <span id="quote-author">✨ Nuri Alva</span>
         </div>
+        <button id="btn-random-quote" onclick="randomQuote()">
+            <i class="material-icons"></i>
+            Semangati Aku ✨
+        </button>
+    </div>
+</div>
+
+<div id="app-content">
     </div>
 
-    <header id="app-header" class="hidden">
-        <h1 id="page-title">Hari Ini</h1>
-        <span class="material-icons-round" id="logout-btn" style="color:var(--pink-soft); cursor:pointer;">logout</span>
-    </header>
-
-    <main id="app-main" class="hidden">
-        <div id="view-home" class="page hidden">
-            <div id="today-list"></div>
-        </div>
-
-        <div id="view-missed" class="page hidden">
-            <div id="missed-list"></div>
-        </div>
-
-        <div id="view-create" class="page hidden">
-            <div style="background:white; padding:25px; border-radius:30px;">
-                <h3 style="margin:0 0 20px; color: var(--pink-deep)">Rencana Baru</h3>
-                <form id="form-add">
-                    <p style="margin:0; font-size:14px; font-weight:600;">Judul Kegiatan</p>
-                    <input type="text" id="title" placeholder="Contoh: Minum Vitamin" style="background:#f9f9f9; border:none; margin-bottom:15px;" required>
-                    
-                    <p style="margin:0; font-size:14px; font-weight:600;">Catatan</p>
-                    <textarea id="desc" rows="2" placeholder="Catatan opsional..." style="background:#f9f9f9; border:none; margin-bottom:15px;"></textarea>
-                    
-                    <p style="margin:0; font-size:14px; font-weight:600;">Ulangi Hari:</p>
-                    <div class="day-row">
-                        <input type="checkbox" id="d1" class="day-input" value="1"><label for="d1" class="day-btn">Sen</label>
-                        <input type="checkbox" id="d2" class="day-input" value="2"><label for="d2" class="day-btn">Sel</label>
-                        <input type="checkbox" id="d3" class="day-input" value="3"><label for="d3" class="day-btn">Rab</label>
-                        <input type="checkbox" id="d4" class="day-input" value="4"><label for="d4" class="day-btn">Kam</label>
-                        <input type="checkbox" id="d5" class="day-input" value="5"><label for="d5" class="day-btn">Jum</label>
-                        <input type="checkbox" id="d6" class="day-input" value="6"><label for="d6" class="day-btn">Sab</label>
-                        <input type="checkbox" id="d0" class="day-input" value="0"><label for="d0" class="day-btn">Min</label>
-                    </div>
-                    <button type="submit" class="btn-primary">Simpan Jadwal</button>
-                </form>
-            </div>
-        </div>
-    </main>
-
-    <nav id="app-nav" class="hidden">
-        <a href="#home" class="nav-btn active" id="nav-home"><span class="material-icons-round">home</span></a>
-        <a href="#create" class="nav-btn" id="nav-create">
-            <div style="background:var(--pink-deep); width:50px; height:50px; border-radius:20px; display:flex; align-items:center; justify-content:center; margin-top:-30px; box-shadow:0 8px 20px rgba(255, 92, 138, 0.4);">
-                <span class="material-icons-round" style="color:white; margin:0">add</span>
-            </div>
-        </a>
-        <a href="#missed" class="nav-btn" id="nav-missed"><span class="material-icons-round">assignment_late</span></a>
-    </nav>
-</div>
+<nav class="bottom-nav">
+    <a href="#" class="nav-link active" onclick="menuAction('today', this)">
+        <i class="material-icons">auto_awesome</i>
+        <span>Hari Ini</span>
+    </a>
+    <a href="#" class="nav-link" onclick="menuAction('history', this)">
+        <i class="material-icons">history</i>
+        <span>Riwayat</span>
+    </a>
+    <a href="#" class="nav-link" onclick="menuAction('add', this)">
+        <i class="material-icons">add_circle</i>
+        <span>Tambah</span>
+    </a>
+</nav>
 
 <script>
     const API_BASE = "https://apis.geekpesantren.web.id/Api_Angel";
+const quotes = [
+    // --- PART 1: KETENANGAN & KEAMANAN ---
+    "Satu nafas pada satu waktu. Kamu melakukan yang terbaik yang kamu bisa.",
+    "Masa lalumu tidak memiliki kekuatan atas momen ini. Kamu aman sekarang.",
+    "Tidak apa-apa jika hari ini hanya tentang bertahan hidup. Itu sudah cukup.",
+    "Pelan-pelan saja. Kesembuhan bukanlah perlombaan, melainkan perjalanan.",
+    "Perasaanmu valid. Berikan dirimu izin untuk merasakannya tanpa menghakimi.",
+    "Kamu bukan apa yang terjadi padamu. Kamu adalah sosok yang bertahan melaluinya.",
+    "Hargai setiap kemajuan kecil, karena setiap langkah adalah kemenangan.",
+    "Hatimu berhak mendapatkan kedamaian. Mari kita bangun itu pelan-pelan.",
+    "Jangan paksa dirimu untuk sembuh dalam semalam. Bunga butuh waktu untuk mekar.",
+    "Kamu jauh lebih kuat dari memori yang mencoba menakutimu.",
+    "Bernafaslah. Kamu di sini, di masa kini, dan kamu memegang kendali.",
+    "Tidak apa-apa untuk beristirahat. Istirahat adalah bagian dari perjuangan.",
+    "Malam yang paling gelap pun akan berakhir dan matahari akan terbit.",
+    "Setiap hari adalah kesempatan baru untuk menjadi lembut pada diri sendiri.",
+    "Trauma mungkin mengubahmu, tapi ia tidak bisa menghancurkan esensimu.",
+    "Jadilah sahabat terbaik bagi dirimu sendiri hari ini.",
+    "Kamu layak mendapatkan cinta dan kebaikan, terutama dari dirimu sendiri.",
+    "Fokus pada apa yang bisa kamu kendalikan hari ini: nafasmu dan niatmu.",
+    "Jangan biarkan bayangan masa lalu menghalangi sinar matahari hari ini.",
+    "Kamu telah melewati 100% hari-hari sulitmu. Kamu adalah pemenang.",
+    "Keberanian tidak selalu menggelegar. Kadang ia adalah suara lembut di akhir hari.",
+    "Dunia ini lebih baik karena ada kamu di dalamnya. Tetaplah di sini.",
+    "Tarik nafas dalam-dalam. Buang semua beban yang bukan milikmu lagi.",
+    "Berhenti sejenak bukan berarti menyerah. Itu artinya mengisi energi.",
+    "Luka itu akan memudar menjadi bekas luka, dan bekas luka adalah simbol kekuatan.",
+    "Katakan pada dirimu: 'Aku berhak untuk merasa tenang hari ini.'",
+    "Masa depanmu masih bersih dan penuh dengan kemungkinan yang indah.",
+    "Setiap detak jantungmu adalah bukti bahwa hidup masih menginginkanmu.",
+    "Cintai dirimu sedikit lebih banyak hari ini. Kamu pantas mendapatkannya.",
+    "Kamu tidak sendirian. Ada kekuatan besar di dalam dirimu yang menjagamu.",
+    "Sembuh berarti belajar untuk percaya pada diri sendiri lagi.",
+    "Biarkan hari ini mengalir apa adanya. Kamu tidak perlu sempurna.",
+    "Ingatlah betapa jauh kamu telah melangkah dari titik terendahmu.",
+    "Jangan bandingkan prosesmu dengan orang lain. Jalanmu unik dan berharga.",
+    "Ketenangan adalah kekuatan. Mari cari ketenangan itu dalam hal-hal kecil.",
+    "Berikan dirimu pelukan mental. Kamu sudah berjuang sangat hebat.",
+    "Suaramu berhak didengar, tapi hari ini, dengarkanlah keheningan yang damai.",
+    "Kamu sedang membangun kembali pondasimu. Butuh waktu, dan itu tidak apa-apa.",
+    "Awan mendung hanya numpang lewat, langit biru akan selalu ada di baliknya.",
+    "Lakukan satu hal kecil hari ini yang membuat hatimu merasa hangat.",
+    "Kelembutanmu pada diri sendiri adalah senjata terkuatmu.",
+    "Kamu adalah penulis dari bab-bab selanjutnya dalam hidupmu.",
+    "Trauma berbohong padamu tentang nilaimu. Kamu tetap sangat berharga.",
+    "Bernafaslah. Udara ini milikmu. Momen ini milikmu.",
+    "Tidak ada yang salah dengan merasa rapuh. Itu membuktikan kamu manusia.",
 
-    function checkAuth() {
-        if (!localStorage.getItem('angel_auth')) {
-            $('#view-login').removeClass('hidden');
-            $('#app-header, #app-main, #app-nav').addClass('hidden');
-        } else {
-            $('#view-login').addClass('hidden');
-            $('#app-header, #app-main, #app-nav').removeClass('hidden');
-            navigate();
-        }
-    }
+    // --- PART 2: KEKUATAN & HARAPAN ---
+    "Jadilah sabar. Hal-hal indah butuh kesabaran untuk tumbuh.",
+    "Kamu berhak melepaskan apa yang tidak lagi melayani kedamaianmu.",
+    "Kedamaian dimulai ketika kamu memutuskan untuk tidak membiarkan masa lalu memimpin.",
+    "Lihatlah ke cermin dan katakan: 'Terima kasih sudah bertahan sampai hari ini.'",
+    "Kamu adalah pejuang yang penuh keanggunan.",
+    "Biarkan cahaya kecil masuk ke celah-celah hatimu hari ini.",
+    "Hari ini adalah halaman baru. Tuliskan sesuatu yang lembut di sana.",
+    "Ketakutan adalah reaksi, tapi keberanian adalah keputusan.",
+    "Kamu memiliki kekuatan untuk mendefinisikan ulang siapa dirimu sekarang.",
+    "Jangan biarkan bisikan masa lalu menenggelamkan harapan masa depanmu.",
+    "Satu langkah kecil masih tetaplah sebuah kemajuan.",
+    "Dunia ini luas, dan ada tempat yang tenang untukmu di dalamnya.",
+    "Kamu cukup. Kamu selalu cukup. Kamu akan selalu cukup.",
+    "Berjalanlah dengan kepala tegak. Kamu sudah melewati badai besar.",
+    "Kesembuhanmu adalah bentuk balas dendam terbaik terhadap rasa sakit.",
+    "Tubuhmu adalah rumahmu, dan hari ini ia aman untuk ditinggali.",
+    "Kamu tidak berhutang penjelasan pada siapa pun tentang caramu sembuh.",
+    "Izinkan dirimu untuk tumbuh perlahan, seperti pohon yang kuat.",
+    "Masa lalu adalah tempat untuk belajar, bukan tempat untuk tinggal.",
+    "Hargai dirimu karena tetap mencoba, bahkan saat rasanya sangat berat.",
+    "Kamu berhak mengambil ruang di dunia ini. Jangan merasa kecil.",
+    "Pikiranmu mungkin sedang berisik, tapi hatimu tahu jalan pulang.",
+    "Setiap air mata yang jatuh adalah cara jiwamu melepaskan beban.",
+    "Kamu adalah bukti hidup bahwa manusia bisa bangkit berkali-kali.",
+    "Kesalahan masa lalu bukanlah identitasmu yang sekarang.",
+    "Jadilah lembut pada pikiranmu, ia hanya sedang berusaha menjagamu.",
+    "Kedamaian batin adalah prioritas tertinggimu hari ini.",
+    "Kamu tidak perlu memegang semuanya sendirian. Lepaskan yang berat.",
+    "Hidup ini tentang momen-momen kecil. Mari nikmati yang satu ini.",
+    "Kekuatanmu tidak diukur dari seberapa cepat kamu bangkit, tapi dari niatmu.",
+    "Jangan biarkan orang yang tidak tahu ceritamu menuliskan akhir ceritamu.",
+    "Kamu sedang mekar di musimmu sendiri. Jangan terburu-buru.",
+    "Dunia mungkin keras, tapi kamu tetap bisa memilih untuk menjadi baik.",
+    "Katakan: 'Aku memilih untuk melepaskan apa yang tidak bisa kuubah.'",
+    "Kamu berhak mendapatkan ketenangan yang tak terusik oleh bayangan.",
+    "Masa sulitmu sedang menempa versi dirimu yang paling bijaksana.",
+    "Ingatlah, bernafas dengan tenang adalah sebuah pencapaian besar.",
+    "Kamu adalah pemilik kunci menuju kebebasan mentalmu sendiri.",
+    "Jangan pernah meminta maaf karena telah memprioritaskan kesehatan mentalmu.",
+    "Satu hari yang tenang adalah berkah yang luar biasa. Syukuri itu.",
+    "Kamu lebih berharga daripada produktivitas atau pencapaianmu.",
+    "Biarkan hatimu dipenuhi oleh hal-hal yang membuatmu merasa hidup.",
+    "Tidak ada kata terlambat untuk mulai mencintai diri sendiri kembali.",
+    "Kamu aman. Kamu dicintai. Kamu dilindungi oleh kekuatan batinmu.",
+    "Teruslah melangkah, Angel. Masa depan yang cerah sudah menantimu.",
 
-    function navigate() {
-        let hash = window.location.hash || '#home';
-        $('.page').addClass('hidden');
-        $('.nav-btn').removeClass('active');
-        $(`#view-${hash.replace('#','')}`).removeClass('hidden');
-        $(`#nav-${hash.replace('#','')}`).addClass('active');
+    // --- PART 3: PEMULIHAN MENDALAM (NEW) ---
+    "Setiap sel di tubuhmu sedang bekerja untuk menyembuhkanmu.",
+    "Bicaralah pada dirimu sendiri seperti kamu bicara pada anak kecil yang kamu cintai.",
+    "Kamu tidak rusak. Kamu sedang dalam proses rekonstruksi yang indah.",
+    "Biarkan hari ini menjadi hari di mana kamu berhenti menjadi musuh bagi dirimu sendiri.",
+    "Istirahat bukanlah hadiah bagi keberhasilan, tapi kebutuhan bagi keberadaanmu.",
+    "Pintu masa lalu sudah tertutup. Kuncinya ada di tanganmu, simpanlah baik-baik.",
+    "Awan tidak pernah menghalangi matahari selamanya. Begitu juga dengan kesedihanmu.",
+    "Kamu memiliki hak untuk menetapkan batasan demi kedamaian jiwamu.",
+    "Kebaikan kecil untuk diri sendiri hari ini akan menjadi kekuatan besar esok hari.",
+    "Lihatlah bintang; mereka bersinar dalam kegelapan, sama seperti jiwamu.",
+    "Kamu adalah keajaiban yang tetap bertahan meski badai menerjang.",
+    "Lepaskan rasa bersalah karena tidak menjadi 'baik-baik saja'. Itu manusiawi.",
+    "Hatimu adalah taman. Sirami dengan pikiran positif dan kasih sayang.",
+    "Jangan biarkan kemarin mengambil terlalu banyak waktu dari hari ini.",
+    "Kamu berhak bernafas tanpa beban masa lalu di pundakmu.",
+    "Kesembuhanmu adalah bukti bahwa cinta diri adalah obat yang nyata.",
+    "Pilih satu hal yang bisa kamu syukuri saat ini, sekecil apa pun itu.",
+    "Masa depanmu tidak ditentukan oleh momen-momen gelapmu.",
+    "Kamu sedang belajar menari di tengah hujan, dan itu sangat mengagumkan.",
+    "Keheningan bukanlah musuh. Keheningan adalah tempat jiwamu berbicara pelan.",
+    "Kamu pantas mendapatkan lingkungan yang mendukung pertumbuhanmu.",
+    "Jangan takut pada bayangan. Itu artinya ada cahaya di dekatmu.",
+    "Kekuatanmu ada pada kelembutanmu dalam memaafkan diri sendiri.",
+    "Tarik nafas cahaya, hembuskan kegelapan. Kamu memegang kendali.",
+    "Kamu adalah kanvas yang indah, dan hari ini adalah warna yang baru.",
+    "Percayalah pada waktu. Semua akan masuk akal pada saat yang tepat.",
+    "Dunia butuh cahaya unik yang hanya bisa diberikan olehmu.",
+    "Hargai tubuhmu karena telah membawamu sejauh ini.",
+    "Kamu tidak perlu menjadi sempurna untuk dicintai.",
+    "Kedamaian adalah perjalanan, bukan tujuan akhir. Nikmati tiap langkahnya.",
+    "Keberanian adalah tetap melangkah meski lututmu gemetar.",
+    "Berikan dirimu waktu sebanyak yang kamu butuhkan. Tidak ada tenggat waktu.",
+    "Kamu adalah pemenang dari pertempuran yang tak pernah dibicarakan orang lain.",
+    "Sinar matamu adalah cermin dari ketangguhan jiwamu.",
+    "Cukup jalani hari ini. Esok biarlah menjadi urusan esok.",
+    "Memaafkan bukan berarti melupakan, tapi melepaskan beban di hati.",
+    "Setiap pagi adalah undangan untuk memulai kembali tanpa beban.",
+    "Kamu layak mendapatkan hidup yang tenang dan penuh makna.",
+    "Terima kasih karena sudah berjuang begitu keras. Kamu hebat.",
+    "Langit tetap biru meski tertutup awan paling hitam sekalipun.",
+    "Jangan biarkan suaramu hilang dalam kebisingan trauma.",
+    "Kamu memiliki kekuatan untuk berkata 'tidak' pada apa yang menyakitimu.",
+    "Cahaya di dalam dirimu tidak akan pernah benar-benar padam.",
+    "Kamu adalah pelangi setelah badai yang panjang.",
+    "Jadilah sumber ketenanganmu sendiri hari ini.",
 
-        if(hash === '#home') { $('#page-title').text('Hari Ini'); loadToday(); }
-        if(hash === '#missed') { $('#page-title').text('History Lupa'); loadMissed(); }
-        if(hash === '#create') { $('#page-title').text('Buat Baru'); }
-    }
+    // --- PART 4: PENERIMAAN DIRI (NEW) ---
+    "Tidak apa-apa untuk memulai dari awal lagi.",
+    "Kesembuhan dimulai ketika kamu berhenti menolak kenyataan dan mulai merangkul diri.",
+    "Hargai prosesmu, sekecil apa pun kemajuannya.",
+    "Kamu berhak atas kebahagiaan tanpa syarat.",
+    "Ingatlah, kamu sedang berproses menjadi versi dirimu yang lebih kuat.",
+    "Jangan biarkan ketakutan akan masa lalu menghentikan langkahmu ke masa depan.",
+    "Bernafaslah dengan lega. Beban itu perlahan akan terangkat.",
+    "Kamu adalah pemegang kendali atas emosimu sendiri.",
+    "Setiap momen adalah kesempatan untuk memilih cinta daripada rasa takut.",
+    "Percayalah bahwa hal-hal baik akan datang kepadamu.",
+    "Kamu pantas mendapatkan ketenangan pikiran di malam hari.",
+    "Jangan pernah menyerah pada dirimu sendiri.",
+    "Kekuatanmu tumbuh di tempat-tempat yang pernah terluka.",
+    "Kamu lebih dari sekadar pengalamanmu.",
+    "Jadilah lembut pada jiwamu yang lelah.",
+    "Masa depanmu penuh dengan cahaya dan kedamaian.",
+    "Kamu memiliki hak untuk merasa aman di dunia ini.",
+    "Satu tindakan cinta diri hari ini adalah kemenangan besar.",
+    "Kamu adalah bintang utama dalam perjalanan kesembuhanmu.",
+    "Berikan dirimu ruang untuk bernafas dan berkembang.",
+    "Setiap hari adalah langkah menuju dirimu yang lebih utuh.",
+    "Kamu tidak sendirian dalam perjuangan ini.",
+    "Ketenangan adalah pelabuhan terakhirmu, dan kamu sedang menuju ke sana.",
+    "Percayalah pada kekuatan batinmu yang tak terbatas.",
+    "Kamu adalah inspirasi bagi dirimu sendiri.",
+    "Jangan biarkan dunia mengubah hatimu yang baik.",
+    "Masa lalu hanyalah sebuah cerita, ia tidak lagi memiliki kuasa.",
+    "Kamu adalah bunga yang mekar di padang gurun.",
+    "Tetaplah bersinar, Angel. Kamu sangat berharga.",
+    "Hari ini adalah milikmu. Isilah dengan ketenangan."
+];
 
-    function loadToday() {
-        $.getJSON(`${API_BASE}/list_today`, d => {
-            let h = '';
-            d.forEach(t => {
-                h += `<div class="task-card ${t.log_id ? 'done' : ''}">
-                    <div class="checkbox-custom ${t.log_id ? 'active' : ''}" onclick="toggleTask(${t.id})">
-                        <span class="material-icons-round">done</span>
-                    </div>
-                    <div style="flex:1"><strong>${t.title}</strong><br><small style="color:#999">${t.description || ''}</small></div>
-                </div>`;
-            });
-            $('#today-list').html(h || '<p style="text-align:center; opacity:0.3; margin-top:100px;">Belum ada jadwal hari ini</p>');
+function displayDailyQuote() {
+    const today = new Date();
+    // Gunakan tanggal (hari ke-sekian dalam tahun) untuk memilih quote secara rotasi
+    const start = new Date(today.getFullYear(), 0, 0);
+    const diff = today - start;
+    const oneDay = 1000 * 60 * 60 * 24;
+    const dayOfYear = Math.floor(diff / oneDay);
+    
+    // Ambil index berdasarkan hari (modulo jumlah quotes)
+    const quoteIndex = dayOfYear % quotes.length;
+    $('#quote-text').text(`"${quotes[quoteIndex]}"`);
+}
+
+// Panggil fungsi ini di dalam $(document).ready()
+<!-- $(document).ready(function() { -->
+<!--     loadData('get_today', '🌸 Angel\'s Day'); -->
+<!-- }); -->
+<!--  -->
+    $(document).ready(function() {
+    displayDailyQuote();
+        loadData('get_today', '🌸 Hari Ini');
+    });
+
+function menuAction(type, el) {
+    $('.nav-link').removeClass('active');
+    $(el).addClass('active');
+
+    if (type === 'today') loadData('get_today', '🌸 Angel\'s Day');
+    if (type === 'quotes') renderQuotes(); // Panggil fungsi baru ini
+    if (type === 'history') loadData('get_history', '📜 Riwayat');
+    if (type === 'add') renderForm();
+}
+
+    function loadData(endpoint, title) {
+        $('#header-title').text(title);
+        $('#app-content').html('<div class="loader"><i class="material-icons animate-spin">sync</i><p>Sabar ya cantik...</p></div>');
+
+        $.getJSON(`${API_BASE}/${endpoint}`, function(data) {
+            let html = '';
+            if (data.length === 0) {
+                html = '<div style="text-align:center; margin-top:50px; color:#ccc;"><i class="material-icons" style="font-size:4rem">spa</i><p>Belum ada kegiatan nih.</p></div>';
+            } else {
+                data.forEach(item => {
+                    const isDone = item.is_done == 1 ? 'done' : '';
+                    const icon = item.is_done == 1 ? 'check_circle' : 'radio_button_unchecked';
+                    html += `
+                        <div class="todo-item ${isDone}">
+                            <i class="material-icons btn-check" onclick="toggleStatus(${item.id}, ${item.is_done})">${icon}</i>
+                            <div class="text">
+                                ${item.nama_kegiatan}
+                                <span class="date-badge">${item.tanggal}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            $('#app-content').html(html);
+        }).fail(function() {
+            $('#app-content').html('<p style="text-align:center; color:red">Aduh! Gagal ambil data. Cek koneksi API ya.</p>');
         });
     }
 
-    function loadMissed() {
-        $.getJSON(`${API_BASE}/list_missed`, d => {
-            let h = '';
-            if(d.length === 0) h = '<p style="text-align:center; opacity:0.3; margin-top:100px;">Semua tuntas!</p>';
-            d.forEach(t => h += `<div class="task-card" style="border-left:6px solid #ffcc00"><strong>${t.title}</strong></div>`);
-            $('#missed-list').html(h);
+    function renderForm() {
+        $('#header-title').text('✨ Tambah Baru');
+        const today = new Date().toISOString().split('T')[0];
+        const formHtml = `
+            <div class="form-card">
+                <div class="form-group">
+                    <label>Apa rencanamu?</label>
+                    <input type="text" id="nama_kegiatan" placeholder="Contoh: Skincarean.." autofocus>
+                </div>
+                <div class="form-group">
+                    <label>Kapan dikerjakan?</label>
+                    <input type="date" id="tanggal" value="${today}">
+                </div>
+                <button class="btn-add" onclick="submitData()">Simpan Rencana 💖</button>
+            </div>
+        `;
+        $('#app-content').html(formHtml);
+    }
+
+    function submitData() {
+        const nama = $('#nama_kegiatan').val();
+        const tgl = $('#tanggal').val();
+
+        if (!nama || !tgl) {
+            alert('Lengkapi datanya dulu ya, Angel!');
+            return;
+        }
+
+        $.ajax({
+            url: `${API_BASE}/add`,
+            method: 'POST',
+            data: { nama_kegiatan: nama, tanggal: tgl },
+            dataType: 'json',
+            success: function(res) {
+                if (res.status) {
+                    menuAction('today', $('.nav-link')[0]);
+                } else {
+                    alert('Gagal nyimpen data!');
+                }
+            },
+            error: function() { alert('Error Server!'); }
         });
     }
 
-    function toggleTask(id) { $.post(`${API_BASE}/toggle_check`, { activity_id: id }, () => loadToday()); }
-
-$('#form-add').submit(function(e){
-    e.preventDefault();
-    // Build repeat fields for each day of the week
-    let repeat = {
-        is_daily: 0,
-        repeat_mon: 0,
-        repeat_tue: 0,
-        repeat_wed: 0,
-        repeat_thu: 0,
-        repeat_fri: 0,
-        repeat_sat: 0,
-        repeat_sun: 0
-    };
-    $('.day-input:checked').each(function(){
-        switch($(this).val()) {
-            case "1": repeat.repeat_mon = 1; break;
-            case "2": repeat.repeat_tue = 1; break;
-            case "3": repeat.repeat_wed = 1; break;
-            case "4": repeat.repeat_thu = 1; break;
-            case "5": repeat.repeat_fri = 1; break;
-            case "6": repeat.repeat_sat = 1; break;
-            case "0": repeat.repeat_sun = 1; break;
-        }
+function renderQuotes() {
+    $('#header-title').text('💖 Healing Words');
+    let html = '<div class="quote-gallery">';
+    
+    quotes.forEach((q, index) => {
+        html += `
+            <div class="quote-card-mini">
+                <p>"${q}"</p>
+                <span>#SelfLove ${index + 1}</span>
+            </div>
+        `;
     });
-    $.post(`${API_BASE}/add_activity`, {
-        title: $('#title').val(),
-        description: $('#desc').val(),
-        ...repeat
-    }, () => {
-        window.location.hash = '#home';
-        $('#form-add')[0].reset();
-        $('.day-input').prop('checked', false);
-    });
-});
-    $('#form-login').submit(function(e){
-        e.preventDefault();
-        $.post(`${API_BASE}/login`, {email:$('#login-email').val(), password:$('#login-pass').val()}, () => {
-            localStorage.setItem('angel_auth', 'true'); checkAuth();
-        }).fail(() => alert('Sabar ya, passwordnya salah!'));
-    });
+    
+    html += '</div>';
+    $('#app-content').html(html);
+}
 
-    $('#logout-btn').click(() => { if(confirm('Logout?')){ localStorage.removeItem('angel_auth'); checkAuth(); }});
+// Update juga fungsi menuAction kamu
 
-    window.onhashchange = navigate;
-    $(document).ready(checkAuth);
+function randomQuote() {
+    const content = $('#quote-content');
+    
+    // Efek Fade Out
+    content.addClass('fade-out');
+    
+    setTimeout(() => {
+        // Pilih index acak dari array quotes (90 quotes)
+        const randomIndex = Math.floor(Math.random() * quotes.length);
+        const newQuote = quotes[randomIndex];
+        
+        // Update teks
+        $('#quote-text').text(`"${newQuote}"`);
+        
+        // Efek Fade In
+        content.removeClass('fade-out');
+    }, 400); // Durasi sesuai transisi CSS
+}
+    function toggleStatus(id, current) {
+        const newStatus = current == 1 ? 0 : 1;
+        $.ajax({
+            url: `${API_BASE}/check`,
+            method: 'POST',
+            data: { id: id, is_done: newStatus },
+            dataType: 'json',
+            success: function() {
+                // Refresh data yang sedang aktif
+                const currentTitle = $('#header-title').text();
+                if (currentTitle.includes('Hari Ini')) loadData('get_today', '🌸 Hari Ini');
+                else loadData('get_history', '📜 Riwayat');
+            }
+        });
+    }
 </script>
+
 </body>
 </html>
