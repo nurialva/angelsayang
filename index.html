@@ -285,14 +285,40 @@
 
     function toggleTask(id) { $.post(`${API_BASE}/toggle_check`, { activity_id: id }, () => loadToday()); }
 
-    $('#form-add').submit(function(e){
-        e.preventDefault();
-        let days = []; $('.day-input:checked').each(function(){ days.push($(this).val()); });
-        $.post(`${API_BASE}/add_activity`, { title: $('#title').val(), description: $('#desc').val(), days: days.join(',') }, () => {
-            window.location.hash = '#home'; $('#form-add')[0].reset(); $('.day-input').prop('checked', false);
-        });
+$('#form-add').submit(function(e){
+    e.preventDefault();
+    // Build repeat fields for each day of the week
+    let repeat = {
+        is_daily: 0,
+        repeat_mon: 0,
+        repeat_tue: 0,
+        repeat_wed: 0,
+        repeat_thu: 0,
+        repeat_fri: 0,
+        repeat_sat: 0,
+        repeat_sun: 0
+    };
+    $('.day-input:checked').each(function(){
+        switch($(this).val()) {
+            case "1": repeat.repeat_mon = 1; break;
+            case "2": repeat.repeat_tue = 1; break;
+            case "3": repeat.repeat_wed = 1; break;
+            case "4": repeat.repeat_thu = 1; break;
+            case "5": repeat.repeat_fri = 1; break;
+            case "6": repeat.repeat_sat = 1; break;
+            case "0": repeat.repeat_sun = 1; break;
+        }
     });
-
+    $.post(`${API_BASE}/add_activity`, {
+        title: $('#title').val(),
+        description: $('#desc').val(),
+        ...repeat
+    }, () => {
+        window.location.hash = '#home';
+        $('#form-add')[0].reset();
+        $('.day-input').prop('checked', false);
+    });
+});
     $('#form-login').submit(function(e){
         e.preventDefault();
         $.post(`${API_BASE}/login`, {email:$('#login-email').val(), password:$('#login-pass').val()}, () => {
